@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>校园天赋小宇宙 · 像素版</title>
 <style>
   :root{
@@ -63,8 +63,21 @@
     font-size:19px; cursor:pointer; z-index:5;
   }
   .sfx-btn:hover{transform:translateY(-1px)}
+  /* ===== 触控与可点性（WCAG 2.5.8/2.5.5 目标尺寸 ≥44px；touch-action 消除双击缩放延迟） ===== */
+  html{-webkit-text-size-adjust:100%;touch-action:manipulation}
+  body{touch-action:manipulation}
+  button,.pixel-btn,.test-btn,.opt,.sfx-btn,#diffBtns button,.badge{cursor:pointer;touch-action:manipulation}
+  canvas{touch-action:manipulation}
+  .g10-cv,.g10-stage canvas{touch-action:none}
+  #suikaCanvas,#snakeBoard,#hardGrid,#t2048Grid,#boxGrid,#frogGrid,#mopCv,#bagCv{touch-action:none}
+  .pixel-btn{min-height:46px}
+  .opt{min-height:44px;display:flex;align-items:center}
+  /* 悬浮「玩法」按钮 */
+  #helpFab{position:fixed;right:14px;bottom:20px;z-index:90;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:var(--cyan);color:#0b0d1a;border:var(--px) solid #0b0d1a;box-shadow:0 4px 0 0 #0b0d1a;font-size:21px;font-weight:900;cursor:pointer;touch-action:manipulation}
+  #helpFab:active{transform:translate(1px,2px);box-shadow:0 1px 0 0 #0b0d1a}
+  #helpFab.hidden{display:none}
   .test-grid{display:flex;flex-direction:column;gap:14px;margin-top:20px}
-.group-title{display:flex;align-items:center;gap:9px;margin:30px 0 2px;font:bold 12px 'Press Start 2P',monospace;color:var(--ink);letter-spacing:1px;text-shadow:1px 1px 0 rgba(255,255,255,.55)}
+.group-title{display:flex;align-items:center;gap:9px;margin:30px 0 2px;font:bold 13px 'Press Start 2P',monospace;color:var(--ink);letter-spacing:1px;text-shadow:1px 1px 0 rgba(255,255,255,.55);white-space:nowrap}
 .group-title:first-child{margin-top:8px}
 .group-title::after{content:'';flex:1;height:3px;background:var(--ink);box-shadow:2px 2px 0 0 rgba(255,255,255,.5);border-radius:2px}
   .test-btn{
@@ -79,8 +92,8 @@
     background:var(--panel2); border:2px solid #0b0d1a; box-shadow:2px 2px 0 0 #0b0d1a inset;
   }
   .test-meta{flex:1}
-  .test-meta b{font-size:16px;display:block;letter-spacing:1px}
-  .test-meta span{font-size:12px;color:var(--sub);line-height:1.6;display:block;margin-top:4px}
+  .test-meta b{font-size:17px;display:block;letter-spacing:1px;color:#0b0d1a;font-weight:900}
+  .test-meta span{font-size:12.5px;color:var(--sub);line-height:1.7;display:block;margin-top:4px}
   .badge{font-size:10.5px;color:#0b0d1a;background:var(--gold);padding:3px 8px;border:2px solid #0b0d1a;white-space:nowrap;align-self:flex-start;font-weight:900}
 .badge.pink{background:var(--pink);color:#fff}
 .badge.cyan{background:var(--cyan);color:#0b0d1a}
@@ -300,11 +313,11 @@
   .setting-row b{font-size:14px}
   .setting-row .sub{font-size:11px;color:var(--sub);margin-top:2px;line-height:1.5}
   .btn-row{display:flex;gap:8px;margin-top:8px}
-  .btn-row button{flex:1;border:var(--px) solid #0b0d1a;padding:10px 4px;font-size:12px;font-weight:800;background:var(--panel2);cursor:pointer;font-family:inherit;letter-spacing:1px}
+  .btn-row button{flex:1;border:var(--px) solid #0b0d1a;padding:10px 4px;min-height:44px;font-size:12px;font-weight:800;background:var(--panel2);cursor:pointer;font-family:inherit;letter-spacing:1px}
   .btn-row button.sel{background:var(--gold);color:#1a1420;box-shadow:0 3px 0 0 #0b0d1a}
   .glo-overlay{position:fixed;inset:0;background:rgba(8,10,20,.86);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:24px;z-index:80}
   .glo-box{background:var(--panel);border:var(--px) solid #0b0d1a;box-shadow:0 8px 0 0 #0b0d1a;padding:26px 24px;max-width:420px;width:100%}
-  .glo-box p{font-size:15px;line-height:2;color:var(--ink);margin:10px 0 16px}
+  .glo-box p{font-size:14.5px;line-height:1.95;color:var(--ink);margin:10px 0 16px;white-space:pre-line;text-align:left}
   #toast{position:fixed;top:14px;left:50%;transform:translateX(-50%);background:var(--gold);color:#1a1420;border:var(--px) solid #0b0d1a;box-shadow:0 4px 0 0 #0b0d1a;padding:10px 18px;font-weight:800;font-size:14px;letter-spacing:1px;z-index:95;max-width:90%;text-align:center}
   #toast.show{animation:toastIn .3s both}
   #toast.hide{display:none}
@@ -452,20 +465,10 @@
         <div class="badge new">NEW</div>
       </button>
 
-      <div class="group-title">🕹️ 休闲玩法</div>
+      <div class="group-title">🧩 益智消除</div>
       <button class="test-btn" onclick="openMerge()">
         <div class="test-ico">🍉</div>
         <div class="test-meta"><b>今日合成局</b><span>像素合成大西瓜：同果合体八级进化，合成之神就是你</span></div>
-        <div class="badge new">NEW</div>
-      </button>
-      <button class="test-btn" onclick="openSpot()">
-        <div class="test-ico">🔍</div>
-        <div class="test-meta"><b>校园找茬</b><span>宿舍/食堂/图书馆三连找茬，考验你的像素鹰眼</span></div>
-        <div class="badge new">NEW</div>
-      </button>
-      <button class="test-btn" onclick="openDrift()">
-        <div class="test-ico">🏎️</div>
-        <div class="test-meta"><b>无限漂移</b><span>Poki 最火的漂移赛车：按住方向键过弯，别冲出赛道</span></div>
         <div class="badge new">NEW</div>
       </button>
       <button class="test-btn" onclick="openBlock()">
@@ -473,49 +476,9 @@
         <div class="test-meta"><b>方块拼图</b><span>Poki 5 大当红益智：填满行/列消除，越放越上头</span></div>
         <div class="badge new">NEW</div>
       </button>
-      <button class="test-btn" onclick="openHook()">
-        <div class="test-ico">🪝</div>
-        <div class="test-meta"><b>火柴人摆荡</b><span>Poki 热门摆荡神作：挂上支点荡出去，蜘蛛侠就是你</span></div>
-        <div class="badge new">NEW</div>
-      </button>
-      <button class="test-btn" onclick="openCan()">
-        <div class="test-ico">🍚</div>
-        <div class="test-meta"><b>食堂抢饭大作战</b><span>移动餐盘接住美食，躲开黑暗料理，干饭人永不认输</span></div>
-        <div class="badge new">NEW</div>
-      </button>
-      <button class="test-btn" onclick="openRun()">
-        <div class="test-ico">🏃</div>
-        <div class="test-meta"><b>课间铃声跑</b><span>跳过拖把水桶一路狂奔，铃响前第一个冲回教室</span></div>
-        <div class="badge new">NEW</div>
-      </button>
       <button class="test-btn" onclick="openBag()">
         <div class="test-ico">🎒</div>
         <div class="test-meta"><b>书包收纳王</b><span>书本摆放成行整包带走，书包整理界的俄罗斯方块</span></div>
-        <div class="badge new">NEW</div>
-      </button>
-      <button class="test-btn" onclick="openBin()">
-        <div class="test-ico">♻️</div>
-        <div class="test-meta"><b>垃圾分类大师</b><span>纸箱/电池/香蕉皮往哪儿扔？环保小课堂开考啦</span></div>
-        <div class="badge new">NEW</div>
-      </button>
-      <button class="test-btn" onclick="openMem()">
-        <div class="test-ico">🧠</div>
-        <div class="test-meta"><b>学科配对翻牌</b><span>圆周率、H₂O、诗仙李白——翻牌配对，边玩边记知识点</span></div>
-        <div class="badge new">NEW</div>
-      </button>
-      <button class="test-btn" onclick="openAla()">
-        <div class="test-ico">⏰</div>
-        <div class="test-meta"><b>早起打卡王</b><span>闹钟随机乱跳，手指快准狠全部按掉，30 秒挑战</span></div>
-        <div class="badge new">NEW</div>
-      </button>
-      <button class="test-btn" onclick="openCol()">
-        <div class="test-ico">🎨</div>
-        <div class="test-meta"><b>调色实验室</b><span>红黄蓝三原色调出 16 格目标色，美术课满分卷</span></div>
-        <div class="badge new">NEW</div>
-      </button>
-      <button class="test-btn" onclick="openOrb()">
-        <div class="test-ico">🪐</div>
-        <div class="test-meta"><b>星球能量收集</b><span>切换内外轨道穿梭收集能量，躲开陨石守护飞船</span></div>
         <div class="badge new">NEW</div>
       </button>
       <button class="test-btn" onclick="openSeat()">
@@ -523,39 +486,35 @@
         <div class="test-meta"><b>校车抢座</b><span>交换座位三连消除，放学抢座大战一触即发</span></div>
         <div class="badge new">NEW</div>
       </button>
-      <button class="test-btn" onclick="openMop()">
-        <div class="test-ico">🧹</div>
-        <div class="test-meta"><b>值日生大扫除</b><span>拖动小值日生扫净全屋污渍，顽固污渍要擦两遍</span></div>
-        <div class="badge new">NEW</div>
-      </button>
-      <button class="test-btn" onclick="openTurtle()">
-        <div class="test-ico">🐢</div>
-        <div class="test-meta"><b>海龟汤</b><span>一条离奇汤面、一个隐藏真相，打探线索破解谜题</span></div>
-        <div class="badge new">NEW</div>
-      </button>
-      <button class="test-btn" onclick="openFix()">
-        <div class="test-ico">🔧</div>
-        <div class="test-meta"><b>人生 Bug 修复器</b><span>今天的人生又出 Bug 了？快打上正确的补丁！</span></div>
-        <div class="badge new">NEW</div>
-      </button>
-      <button class="test-btn" onclick="openSnake()">
-        <div class="test-ico">🐍</div>
-        <div class="test-meta"><b>课间贪吃蛇</b><span>经典怀旧 · 吃满知识苹果，别咬到自己的尾巴</span></div>
-        <div class="badge new">NEW</div>
-      </button>
       <button class="test-btn" onclick="openSheep()">
         <div class="test-ico">🐑</div>
         <div class="test-meta"><b>羊了个羊</b><span>爆款三消博弈 · 60 秒配对消除，挑战 0.01% 通关率</span></div>
         <div class="badge new">NEW</div>
       </button>
-      <button class="test-btn" onclick="openMole()">
-        <div class="test-ico">🔨</div>
-        <div class="test-meta"><b>课间打地鼠</b><span>抓捕手速王 · 地鼠冒头马上敲，连击翻倍</span></div>
-        <div class="badge new">NEW</div>
-      </button>
       <button class="test-btn" onclick="openT2048()">
         <div class="test-ico">🔢</div>
         <div class="test-meta"><b>校园 2048</b><span>合成类长青 · 方向键合并数字到 2048 就封神</span></div>
+        <div class="badge new">NEW</div>
+      </button>
+      <button class="test-btn" onclick="openWater()">
+        <div class="test-ico">🧪</div>
+        <div class="test-meta"><b>水排序</b><span>霸榜解压谜题 · 同色倒一管，全部归位就通关</span></div>
+        <div class="badge pink">解压</div>
+      </button>
+      <button class="test-btn" onclick="openSuika()">
+        <div class="test-ico">🍉</div>
+        <div class="test-meta"><b>合成大西瓜</b><span>2021 全网爆款 · 小果合体进化，合成大西瓜就封神</span></div>
+        <div class="badge pink">爆款</div>
+      </button>
+      <button class="test-btn" onclick="openCol()">
+        <div class="test-ico">🎨</div>
+        <div class="test-meta"><b>调色实验室</b><span>红黄蓝三原色调出 16 格目标色，美术课满分卷</span></div>
+        <div class="badge new">NEW</div>
+      </button>
+      <div class="group-title">🧠 推理问答</div>
+      <button class="test-btn" onclick="openTurtle()">
+        <div class="test-ico">🐢</div>
+        <div class="test-meta"><b>海龟汤</b><span>一条离奇汤面、一个隐藏真相，打探线索破解谜题</span></div>
         <div class="badge new">NEW</div>
       </button>
       <button class="test-btn" onclick="openMine()">
@@ -568,14 +527,45 @@
         <div class="test-meta"><b>课后推箱子</b><span>经典益智 · 把作业箱推到指定位置，3 关全通</span></div>
         <div class="badge new">NEW</div>
       </button>
-      <button class="test-btn" onclick="openBeat()">
-        <div class="test-ico">🎹</div>
-        <div class="test-meta"><b>课桌节拍</b><span>潮流音游 · 音符落线按空格，连击不停最拉风</span></div>
+      <button class="test-btn" onclick="openBin()">
+        <div class="test-ico">♻️</div>
+        <div class="test-meta"><b>垃圾分类大师</b><span>纸箱/电池/香蕉皮往哪儿扔？环保小课堂开考啦</span></div>
         <div class="badge new">NEW</div>
       </button>
-      <button class="test-btn" onclick="openFrog()">
-        <div class="test-ico">🐸</div>
-        <div class="test-meta"><b>青蛙过河</b><span>怀旧街机 · 跳浮木躲车流，护蛙回对岸</span></div>
+      <button class="test-btn" onclick="openMem()">
+        <div class="test-ico">🧠</div>
+        <div class="test-meta"><b>学科配对翻牌</b><span>圆周率、H₂O、诗仙李白——翻牌配对，边玩边记知识点</span></div>
+        <div class="badge new">NEW</div>
+      </button>
+      <button class="test-btn" onclick="openFix()">
+        <div class="test-ico">🔧</div>
+        <div class="test-meta"><b>人生 Bug 修复器</b><span>今天的人生又出 Bug 了？快打上正确的补丁！</span></div>
+        <div class="badge new">NEW</div>
+      </button>
+      <div class="group-title">⚡ 反应手速</div>
+      <button class="test-btn" onclick="openCan()">
+        <div class="test-ico">🍚</div>
+        <div class="test-meta"><b>食堂抢饭大作战</b><span>移动餐盘接住美食，躲开黑暗料理，干饭人永不认输</span></div>
+        <div class="badge new">NEW</div>
+      </button>
+      <button class="test-btn" onclick="openRun()">
+        <div class="test-ico">🏃</div>
+        <div class="test-meta"><b>课间铃声跑</b><span>跳过拖把水桶一路狂奔，铃响前第一个冲回教室</span></div>
+        <div class="badge new">NEW</div>
+      </button>
+      <button class="test-btn" onclick="openAla()">
+        <div class="test-ico">⏰</div>
+        <div class="test-meta"><b>早起打卡王</b><span>闹钟随机乱跳，手指快准狠全部按掉，30 秒挑战</span></div>
+        <div class="badge new">NEW</div>
+      </button>
+      <button class="test-btn" onclick="openOrb()">
+        <div class="test-ico">🪐</div>
+        <div class="test-meta"><b>星球能量收集</b><span>切换内外轨道穿梭收集能量，躲开陨石守护飞船</span></div>
+        <div class="badge new">NEW</div>
+      </button>
+      <button class="test-btn" onclick="openMole()">
+        <div class="test-ico">🔨</div>
+        <div class="test-meta"><b>课间打地鼠</b><span>抓捕手速王 · 地鼠冒头马上敲，连击翻倍</span></div>
         <div class="badge new">NEW</div>
       </button>
       <button class="test-btn" onclick="openPop()">
@@ -583,35 +573,62 @@
         <div class="test-meta"><b>解压戳泡泡</b><span>解压神游 · 泡泡越戳越快，一个都别漏</span></div>
         <div class="badge new">NEW</div>
       </button>
-      <button class="test-btn" onclick="openJump()">
-        <div class="test-ico">🦘</div>
-        <div class="test-meta"><b>跳一跳</b><span>现象级爆款 · 按住蓄力松手跳，落空就没了</span></div>
-        <div class="badge new">NEW</div>
-      </button>
-      <button class="test-btn" onclick="openSuika()">
-        <div class="test-ico">🍉</div>
-        <div class="test-meta"><b>合成大西瓜</b><span>2021 全网爆款 · 小果合体进化，合成大西瓜就封神</span></div>
-        <div class="badge pink">爆款</div>
-      </button>
       <button class="test-btn" onclick="openTiles()">
         <div class="test-ico">⚫</div>
         <div class="test-meta"><b>别踩白块</b><span>现象级手速神游 · 只点黑块，碰到白块就扣命</span></div>
         <div class="badge pink">手速</div>
       </button>
-      <button class="test-btn" onclick="openWater()">
-        <div class="test-ico">🧪</div>
-        <div class="test-meta"><b>水排序</b><span>霸榜解压谜题 · 同色倒一管，全部归位就通关</span></div>
-        <div class="badge pink">解压</div>
+      <button class="test-btn" onclick="openFlap()">
+        <div class="test-ico">🐤</div>
+        <div class="test-meta"><b>像素飞鸟</b><span>2013 现象级 · 点一下飞一下，穿水管刷距离</span></div>
+        <div class="badge pink">魔性</div>
+      </button>
+      <button class="test-btn" onclick="openBeat()">
+        <div class="test-ico">🎹</div>
+        <div class="test-meta"><b>课桌节拍</b><span>潮流音游 · 音符落线按空格，连击不停最拉风</span></div>
+        <div class="badge new">NEW</div>
+      </button>
+      <div class="group-title">🕹️ 操控闯关</div>
+      <button class="test-btn" onclick="openDrift()">
+        <div class="test-ico">🏎️</div>
+        <div class="test-meta"><b>无限漂移</b><span>Poki 最火的漂移赛车：按住方向键过弯，别冲出赛道</span></div>
+        <div class="badge new">NEW</div>
+      </button>
+      <button class="test-btn" onclick="openHook()">
+        <div class="test-ico">🪝</div>
+        <div class="test-meta"><b>火柴人摆荡</b><span>Poki 热门摆荡神作：挂上支点荡出去，蜘蛛侠就是你</span></div>
+        <div class="badge new">NEW</div>
+      </button>
+      <button class="test-btn" onclick="openMop()">
+        <div class="test-ico">🧹</div>
+        <div class="test-meta"><b>值日生大扫除</b><span>拖动小值日生扫净全屋污渍，顽固污渍要擦两遍</span></div>
+        <div class="badge new">NEW</div>
+      </button>
+      <button class="test-btn" onclick="openSnake()">
+        <div class="test-ico">🐍</div>
+        <div class="test-meta"><b>课间贪吃蛇</b><span>经典怀旧 · 吃满知识苹果，别咬到自己的尾巴</span></div>
+        <div class="badge new">NEW</div>
+      </button>
+      <button class="test-btn" onclick="openFrog()">
+        <div class="test-ico">🐸</div>
+        <div class="test-meta"><b>青蛙过河</b><span>怀旧街机 · 跳浮木躲车流，护蛙回对岸</span></div>
+        <div class="badge new">NEW</div>
+      </button>
+      <button class="test-btn" onclick="openJump()">
+        <div class="test-ico">🦘</div>
+        <div class="test-meta"><b>跳一跳</b><span>现象级爆款 · 按住蓄力松手跳，落空就没了</span></div>
+        <div class="badge new">NEW</div>
       </button>
       <button class="test-btn" onclick="openHard()">
         <div class="test-ico">🔴</div>
         <div class="test-meta"><b>史上最难</b><span>Flash 折磨经典 · 躲蓝球走格子，通关都是狠人</span></div>
         <div class="badge pink">受虐</div>
       </button>
-      <button class="test-btn" onclick="openFlap()">
-        <div class="test-ico">🐤</div>
-        <div class="test-meta"><b>像素飞鸟</b><span>2013 现象级 · 点一下飞一下，穿水管刷距离</span></div>
-        <div class="badge pink">魔性</div>
+      <div class="group-title">👀 眼力观察</div>
+      <button class="test-btn" onclick="openSpot()">
+        <div class="test-ico">🔍</div>
+        <div class="test-meta"><b>校园找茬</b><span>宿舍/食堂/图书馆三连找茬，考验你的像素鹰眼</span></div>
+        <div class="badge new">NEW</div>
       </button>
 
       <div class="group-title">🎲 每日运势</div>
@@ -1744,6 +1761,7 @@
       <button id="tutGoBtn" class="pixel-btn cyan" onclick="closeTut()">🚀 开始游戏</button>
     </div>
   </div>
+  <div id="helpFab" class="hidden" onclick="helpShow()" title="玩法教程">❓</div>
 
   <!-- 防沉迷提醒 -->
   <div id="restOverlay" class="glo-overlay hidden">
@@ -3729,9 +3747,26 @@ let dailyData=null, dailyCustom=false;
 function show(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
   document.getElementById(id).classList.add('on');
+  document.body.dataset.screen=id;
+  const fab=document.getElementById('helpFab');
+  if(fab)fab.classList.toggle('hidden',!ACTIVE);
   window.scrollTo(0,0);
 }
 function backHome(){ show('screen-home'); }
+/* 通用滑动帮手：在指定元素上识别一次手势方向，回调 dr,dc（行/列方向增量） */
+function bindSwipe(el,onSwipe){
+  if(!el)return;
+  let x0=0,y0=0,on=false;
+  el.addEventListener('pointerdown',e=>{ on=true; x0=e.clientX; y0=e.clientY; e.preventDefault(); });
+  el.addEventListener('pointermove',e=>{ if(on)e.preventDefault(); });
+  el.addEventListener('pointerup',e=>{
+    if(!on)return; on=false;
+    const dx=e.clientX-x0, dy=e.clientY-y0;
+    if(Math.max(Math.abs(dx),Math.abs(dy))<24)return;
+    onSwipe(Math.abs(dy)>Math.abs(dx)?(dy>0?1:-1):0, Math.abs(dx)>Math.abs(dy)?(dx>0?1:-1):0, dx, dy);
+  });
+  el.addEventListener('pointercancel',()=>{ on=false; });
+}
 
 /* ===================== 答题流程 ===================== */
 function startTest(id){
@@ -5397,6 +5432,13 @@ function bagInit(){
       if(e.key==='ArrowDown'||e.key==='s'||e.key==='S'){bagDrop(3);e.preventDefault();}
       if(e.key===' '){bagDrop(8);e.preventDefault();}
     });
+    bindSwipe(document.getElementById('bagCv'),(dr,dc)=>{
+      if(!BagState.on)return;
+      if(dc<0){BagState.px=Math.max(0,BagState.px-1);}
+      else if(dc>0){BagState.px=Math.min(8-BagState.cur.w,BagState.px+1);}
+      else if(dr<0){bagRot();}
+      else if(dr>0){bagDrop(3);}
+    });
   }
 }
 function bagShape(){ const i=Math.floor(Math.random()*BagShapes.length); const p=BagShapes[i].map(d=>d.slice()); const w=Math.max(...p.map(d=>d[1]))+1; return {p,c:BagColors[i],y:0,w}; }
@@ -5696,7 +5738,7 @@ function alaInit(){
       b.className='g10-card'; b.style.cssText='width:120px;height:110px;font-size:44px;padding:0;border-radius:12px';
       b.id='alac'+i;
       b.textContent='🛏️';
-      b.onclick=()=>alaPick(i);
+      b.addEventListener('pointerdown',e=>{ e.preventDefault(); alaPick(i); });
       g.appendChild(b);
     }
   }
@@ -6121,6 +6163,7 @@ function mopInit(){
       else if(k==='ArrowLeft'||k==='a'||k==='A'){ mopMove(0,-1); e.preventDefault(); }
       else if(k==='ArrowRight'||k==='d'||k==='D'){ mopMove(0,1); e.preventDefault(); }
     });
+    bindSwipe(document.getElementById('mopCv'),(dr,dc)=>{ if(!MopState.on)return; if(dr||dc)mopMove(dr,dc); });
   }
 }
 function openMop(){ show('screen-mop'); ACTIVE='mop'; showTut('mop'); if(MopState.on||MopState.over)return; mopStart(); }
@@ -6505,6 +6548,14 @@ window.addEventListener('keydown',e=>{
   if(nd.x===last.x&&nd.y===last.y)return;
   if(SnakeState.q.length<3)SnakeState.q.push(nd);
 });
+bindSwipe(document.getElementById('snakeBoard'),(dr,dc)=>{
+  if(!SnakeState.on||SnakeState.over)return;
+  const nd={x:dc,y:dr};
+  const last=SnakeState.q.length?SnakeState.q[SnakeState.q.length-1]:SnakeState.dir;
+  if(nd.x===-last.x&&nd.y===-last.y)return;
+  if(nd.x===last.x&&nd.y===last.y)return;
+  if(SnakeState.q.length<3)SnakeState.q.push(nd);
+});
 
 /* ---------- 19. 羊了个羊 ---------- */
 const SheepEmojis=['🐑','🐐','🐏','🐺','🦙','🐈','🐕','🐖','🐄','🐎','🐇','🦔','🐿️','🦆','🐔','🐤','🐝','🐢'];
@@ -6811,6 +6862,11 @@ window.addEventListener('keydown',e=>{
   else if(k==='ArrowLeft'||k==='a'||k==='A'){ t2048Move('l'); e.preventDefault(); }
   else if(k==='ArrowRight'||k==='d'||k==='D'){ t2048Move('r'); e.preventDefault(); }
 });
+bindSwipe(document.getElementById('t2048Grid'),(dr,dc)=>{
+  if(!T2048State.on||T2048State.over)return;
+  if(dr<0)t2048Move('u'); else if(dr>0)t2048Move('d');
+  else if(dc<0)t2048Move('l'); else if(dc>0)t2048Move('r');
+});
 
 /* ---------- 22. 课间扫雷 ---------- */
 const MineState={on:false,over:false,grid:[],W:9,H:9,mines:10,opened:0,score:0,first:true,win:false};
@@ -7057,6 +7113,7 @@ window.addEventListener('keydown',e=>{
   else if(k==='ArrowLeft'||k==='a'||k==='A'){ boxMove(0,-1); e.preventDefault(); }
   else if(k==='ArrowRight'||k==='d'||k==='D'){ boxMove(0,1); e.preventDefault(); }
 });
+bindSwipe(document.getElementById('boxGrid'),(dr,dc)=>{ if(!BoxState.on||BoxState.over)return; if(dr||dc)boxMove(dr,dc); });
 
 /* ---------- 24. 课桌节拍 ---------- */
 const BeatState={on:false,over:false,notes:[],spawnAcc:0,score:0,combo:0,miss:0,raf:null,last:0,lineY:180};
@@ -7154,6 +7211,8 @@ window.addEventListener('keydown',e=>{
   if(!BeatState.on||BeatState.over)return;
   if(e.key===' '||e.key==='Enter'){ beatHit(); e.preventDefault(); }
 });
+const beatCv=document.getElementById('beatCanvas');
+if(beatCv)beatCv.addEventListener('pointerdown',e=>{ if(!BeatState.on||BeatState.over)return; beatHit(); e.preventDefault(); });
 
 /* ---------- 25. 青蛙过河 ---------- */
 const FrogRowType=['goal','road','river','road','river','land'];
@@ -7330,6 +7389,7 @@ window.addEventListener('keydown',e=>{
   else if(k==='ArrowLeft'||k==='a'||k==='A'){ frogJump(0,-1); e.preventDefault(); }
   else if(k==='ArrowRight'||k==='d'||k==='D'){ frogJump(0,1); e.preventDefault(); }
 });
+bindSwipe(document.getElementById('frogGrid'),(dr,dc)=>{ if(!FrogState.on||FrogState.over)return; if(dr||dc)frogJump(dr,dc); });
 
 /* ---------- 26. 解压戳泡泡 ---------- */
 const PopState={on:false,over:false,bubs:[],spawnAcc:0,spawnGap:0.9,score:0,streak:0,miss:0,raf:null,last:0};
@@ -7563,6 +7623,12 @@ window.addEventListener('keyup',e=>{
   if(!JumpState.on||JumpState.over)return;
   if(e.key===' '){ jumpRelease(); e.preventDefault(); }
 });
+const jumpCv=document.getElementById('jumpCanvas');
+if(jumpCv){
+  jumpCv.addEventListener('pointerdown',e=>{ if(!JumpState.on||JumpState.over)return; jumpCharge(); e.preventDefault(); });
+  jumpCv.addEventListener('pointerup',e=>{ if(!JumpState.on||JumpState.over)return; jumpRelease(); });
+  jumpCv.addEventListener('pointercancel',()=>{ if(!JumpState.on||JumpState.over)return; jumpRelease(); });
+}
 
 /* ===================== 28-32. 五款全网爆款抽象小游戏 ===================== */
 
@@ -7668,8 +7734,8 @@ function suikaHud(){ document.getElementById('suikaScoreHud').textContent=SuikaS
 function suikaFeed(t){ const el=document.getElementById('suikaFeed'); if(el)el.textContent=t; }
 (function(){
   const cv=document.getElementById('suikaCanvas');
-  cv.addEventListener('mousemove',e=>{ const r=cv.getBoundingClientRect(); SuikaState.aimX=Math.max(15,Math.min(345,(e.clientX-r.left)/r.width*360)); if(!SuikaState.over)suikaPaint(); });
-  cv.addEventListener('click',e=>{ if(!SuikaState.on||SuikaState.over)return; const r=cv.getBoundingClientRect(); SuikaState.aimX=Math.max(15,Math.min(345,(e.clientX-r.left)/r.width*360)); suikaDrop(); });
+  cv.addEventListener('pointermove',e=>{ const r=cv.getBoundingClientRect(); SuikaState.aimX=Math.max(15,Math.min(345,(e.clientX-r.left)/r.width*360)); if(!SuikaState.over)suikaPaint(); });
+  cv.addEventListener('pointerdown',e=>{ if(!SuikaState.on||SuikaState.over)return; const r=cv.getBoundingClientRect(); SuikaState.aimX=Math.max(15,Math.min(345,(e.clientX-r.left)/r.width*360)); suikaDrop(); });
 })();
 window.addEventListener('keydown',e=>{
   if(!SuikaState.on||SuikaState.over)return;
@@ -7709,7 +7775,7 @@ function tilesPaint(){
         d.style.opacity=isTarget?1:0.55;
       }
       if(isTarget&&black)d.title='快点击我';
-      d.addEventListener('click',()=>tilesTap(c));
+      d.addEventListener('pointerdown',e=>{ e.preventDefault(); tilesTap(c); });
       g.appendChild(d);
     }
   }
@@ -7976,6 +8042,7 @@ window.addEventListener('keydown',e=>{
   const dir={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1],a:[-1,0],d:[1,0],w:[0,-1],s:[0,1],A:[-1,0],D:[1,0],W:[0,-1],S:[0,1]};
   if(dir[k]){ hardMove(dir[k][0],dir[k][1]); e.preventDefault(); }
 });
+bindSwipe(document.getElementById('hardGrid'),(dr,dc)=>{ if(!HardState.on||HardState.over)return; if(dr||dc)hardMove(dc,dr); });
 
 /* ---------- 32. 像素飞鸟 Flap ---------- */
 let FlapState={on:false,over:false,py:120,vy:0,score:0,pipes:[],raf:null,last:0,passed:0};
@@ -8060,7 +8127,7 @@ function flapRestart(){ if(FlapState.raf){cancelAnimationFrame(FlapState.raf);Fl
 function copyFlapResult(){ shareResult('flap',document.getElementById('flapEmoji').textContent,document.getElementById('flapTitle').textContent,'像素飞鸟',FlapState.score); }
 (function(){
   const cv=document.getElementById('flapCanvas');
-  cv.addEventListener('click',e=>{ flapFlap(); });
+  cv.addEventListener('pointerdown',e=>{ if(FlapState.on&&!FlapState.over)flapFlap(); });
 })();
 window.addEventListener('keydown',e=>{
   if(!FlapState.on||FlapState.over)return;
@@ -8197,6 +8264,8 @@ function toast(msg){
 }
 function gameEnded(p,s,title){
   ACTIVE=null;
+  const fab=document.getElementById('helpFab');
+  if(fab)fab.classList.add('hidden');
   bumpPlay(p);
   recWeek(p,s);
   const got=JSON.parse(localStorage.getItem('dw-badges')||'{}');
@@ -8211,43 +8280,45 @@ function gameEnded(p,s,title){
   }
 }
 const TutText={
-  can:'🍚 食堂抢饭：用 ← → 或鼠标移动餐盘接住美食 +10，躲开黑暗料理，接到扣命！',
-  run:'🏃 课间铃声跑：按空格或点击跳跃，跳过拖把、水桶、书包！跑得越远分越高。',
-  bag:'🎒 书包收纳王：← → 移动，↑ 旋转，↓ 加速，空格放入！书本码成完整一行就能整包打包。',
-  bin:'♻️ 垃圾分类：看垃圾，点下面正确的垃圾桶！答对 +10，答错 -5 还告诉你正确答案。',
-  mem:'🧠 学科配对：翻开两张卡，把「科目」和「知识点」配成一对！配得越多分越高。',
-  ala:'⏰ 早起打卡：闹钟到处乱跑，快点点中它！连击越多加分越多，倒计时内速战速决。',
-  col:'🎨 调色实验室：选一个格子，点下方颜料混合，调到和上方目标色接近就算调对！',
-  orb:'🪐 星球能量：点一下或空格切换内外轨道，收集黄色能量，躲开红色陨石！',
-  seat:'🚌 校车抢座：点一个座位再点相邻座位交换，三个一样连在一起就坐下得分！',
-  mop:'🧹 值日大扫除：方向键或 W A S D 移动小值日生扫净脏格，顽固污渍要多扫一遍！',
-  drift:'🏎️ 无限漂移：A / D 或 ← → 控制方向，别冲出赛道！漂移越久分越高。',
-  blk:'🧱 方块拼图：选左侧方块放入 8×8 网格，填满整行或整列消除！',
-  hk:'🪝 火柴人摆荡：鼠标点击挂上支点，松手荡出去，一路抓住下一个支点前进！',
-  mg:'🍉 今日合成局：点下方掉落水果，两个一样的合体进化，合成到大西瓜就是神！',
-  sp:'🔍 校园找茬：找出两幅图的不同处！宿舍、食堂、图书馆三大场景等你挑战。',
-  tg:'🥣 一碗汤面上桌了：全班都说小明在睡觉，可他醒来却满头大汗冲出了教室……\n\n🕵️ 点下面的问题按钮打探线索，每条线索都会回答「是 / 不是 / 无关紧要」\n🧩 线索够多，真相就藏不住了：从 4 个选项里选出唯一真汤底！\n✅ 答对 +150 分，省下的问题越多加分越多；选错会扣分，但能排除一个选项',
-  fix:'🔧 今天的人生又出了 Bug：作业忘写、闹钟没响、饭卡欠费……\n\n🐛 每条 Bug 都有 3 个候选补丁，只有 1 个真能修好它\n🖱️ 用 ← → 选择补丁、空格或回车打上（也可以直接点击）\n✅ 修对 +10 分，连续修复还有连击加分；打错补丁会掉命，命用完或时间到就收工',
-  snake:'🐍 课间贪吃蛇：用方向键或 W A S D 控制小蛇\n\n🍎 吃到知识苹果 +10 分，蛇身越长越难躲\n⚡ 每得 50 分小蛇还会加速，撞墙或咬到自己就结束',
-  sheep:'🐑 羊了个羊：牌堆里藏着 18 对羊羊卡\n\n🃏 一次翻两张，一样的就消除 +10 分，连对还有加成\n⏰ 60 秒内把全场清空才算通关，快练就 0.01% 的通关率吧',
-  mole:'🔨 课间打地鼠：地鼠偷跑进课堂啦\n\n🐹 地鼠冒头马上敲它（点一下）+10 分，连击翻倍\n🪴 小心！敲到花盆会掉命，命用完或时间到就结束',
-  t2048:'🔢 校园 2048：用 ↑ ↓ ← → 滑动合并相同的数字\n\n➕ 两个相同的数碰在一起会合体翻倍，每步出现一个新数字\n🎓 合成出 2048 就通关；无路可走时结束',
-  mine:'💣 课间扫雷：9×9 的雷区里藏着炸弹\n\n🖱️ 点击开格，数字表示周围八格有几颗雷\n🧩 点到 0 会自动扩散；Shift+点击可插 🚩 标记\n🏅 开完所有安全格（不碰雷）就获胜',
-  box:'📦 课后推箱子：用方向键把小熊推到作业箱旁\n\n🧱 一格一格地推，把每个 📦 都送到 ⭐ 上\n🏁 一关完成自动进下一关，3 关全通就放学！',
-  beat:'🎹 课桌节拍：音符正从屏幕顶部往下落\n\n⌨️ 音符落进亮绿判定线附近时按空格：Perfect +30、Good +15\n😵 连击不断更拉风，漏掉 10 个音符就下课',
-  frog:'🐸 青蛙过河：护送小青蛙从操场爬到对岸莲花上\n\n🚗 马路有车流、河里只有浮木，被撞或落水会掉命\n⌨️ 方向键一格一格跳，到对岸进下一关，3 关全通获胜',
-  pop:'🫧 解压戳泡泡：屏幕上泡泡正在越冒越快\n\n🖱️ 点中泡泡 +10 分，连戳不松手有连击加成\n😴 漏掉 10 个泡泡就结束，一口气戳到爽',
-  jump:'🦘 跳一跳：一块一块砖地往前跳\n\n⌨️ 按住空格蓄力，力度条越长跳得越远，松手起跳\n🎯 正好落在下一块砖上 +10 分，连跳加倍；落空就掉下去了',
-  suika:'🍉 合成大西瓜：从发射口丢下小果果\n\n🖱️ 鼠标左右移动瞄准，点击（或空格）发射\n🍇 两个一样的果果碰到就会合体升级：葡萄→樱桃→橘子→柠檬→猕猴桃→番茄→桃子→菠萝→椰子→半瓜→西瓜\n🏆 合成出大西瓜 +500 分直接封神；果果堆出顶线就结束',
-  tiles:'⚫ 别踩白块：只许点黑块\n\n👆 盯着最底一行：黑块一出现马上点它 +10，连点加倍\n⏱️ 点错白块扣命，让黑块滑过也扣命；命用完或时间到就结束',
-  water:'🧪 水排序：把同色液体都倒进同一根试管\n\n🖱️ 先点一根试管选中（金边），再点另一根：顶层的液体会倒过去\n💧 空管或同色顶才能接住液体，每根试管最多 4 层\n✅ 全部归位就通关，步数越少分越高',
-  hard:'🔴 史上最难：红色小球穿越格子阵\n\n⌨️ 方向键或 W A S D 一格一格移动\n🔵 巡逻蓝球碰到就回起点，吃到 🪙 +50\n🏁 在倒计时内走到终点就通关，越快到分越高',
-  flap:'🐤 像素飞鸟：点一下飞一下\n\n🖱️ 点击或按空格扇翅起飞，别让小鸟落地\n🟩 穿过一组水管 +10 分\n💥 撞到水管或落地就结束，飞得越远越牛'
+  can:'🎯 目标：接住美食，躲开黑暗料理\n🕹️ 操作：← → 键移动餐盘；触屏/鼠标直接滑动即可瞄准\n💡 小贴士：美食 +10 分，黑暗料理扣命，连续接到有连击加成',
+  run:'🎯 目标：铃响前跑回教室\n🕹️ 操作：空格或点击跳跃；触屏轻点即跳\n💡 小贴士：跳过拖把、水桶、书包，跑得越远分越高',
+  bag:'🎯 目标：书本码成完整一行就能整包打包\n🕹️ 操作：← → 移动、↑ 旋转、↓ 加速、空格放入；触屏在棋盘上滑动（左右移动 / 上旋转 / 下加速）\n💡 小贴士：提前规划落点，一次放下一整行最赚',
+  bin:'🎯 目标：把垃圾丢进正确的垃圾桶\n🕹️ 操作：点击下面正确的垃圾桶（触屏直接点）\n💡 小贴士：答对 +10 分，答错 -5 分但会告诉你正确答案',
+  mem:'🎯 目标：把「科目」和「知识点」配成一对\n🕹️ 操作：翻开两张卡配对，触屏直接点卡片\n💡 小贴士：配得越多分越高，记住位置是关键',
+  ala:'🎯 目标：30 秒内按掉所有乱跳的闹钟\n🕹️ 操作：点击/触屏点中闹钟\n💡 小贴士：连击越多加分越多，快准狠',
+  col:'🎯 目标：调出和上方目标色接近的颜色\n🕹️ 操作：点格子再点颜料，触屏直接点选\n💡 小贴士：开启色弱辅助会显示 RGB 数值更方便',
+  orb:'🎯 目标：收集黄色能量，躲开红色陨石\n🕹️ 操作：点一下或空格切换内外轨道；触屏点击切换\n💡 小贴士：能量连吃有连击，陨石碰不得',
+  seat:'🎯 目标：三个同款座位连成一线就得分\n🕹️ 操作：点一个座位再点相邻座位交换；触屏直接点选\n💡 小贴士：三个连一起自动坐下消失 +10 分',
+  mop:'🎯 目标：扫净全屋污渍\n🕹️ 操作：方向键 / W A S D 移动；触屏在棋盘上滑动\n💡 小贴士：顽固污渍要扫两遍，全扫净进下一关',
+  drift:'🎯 目标：别冲出赛道，漂得越久分越高\n🕹️ 操作：A / D 或 ← → 控制；触屏在左右半屏按住即可转向\n💡 小贴士：弯道提前打方向，擦边漂移加分多',
+  blk:'🎯 目标：把方块放进 8×8 网格填满行/列\n🕹️ 操作：先点方块选中，再点网格落子；触屏直接点选\n💡 小贴士：填满整行或整列消除，放满游戏结束',
+  hk:'🎯 目标：一路抓住支点荡到终点\n🕹️ 操作：鼠标点击挂上支点、松开荡出；触屏按住挂上、松手荡出\n💡 小贴士：把握好松手时机，荡得越远越容易过',
+  mg:'🎯 目标：两个一样的果果合体进化，合成大西瓜\n🕹️ 操作：点击下方掉落水果（触屏直接点）\n💡 小贴士：葡萄→樱桃→橘子……→西瓜，越合成越值钱',
+  sp:'🎯 目标：找出两幅图的不同处\n🕹️ 操作：点击/触屏点出不同处\n💡 小贴士：宿舍、食堂、图书馆三大场景，找全即过关',
+  tg:'🎯 目标：猜出这碗海龟汤的隐藏真相\n🕹️ 操作：点问题按钮打探线索，线索会回答「是 / 不是 / 无关紧要」；从 4 个选项选真汤底（触屏直接点）\n💡 小贴士：答对 +150 分，省下的问题越多加分越多；选错扣分但能排除选项',
+  fix:'🎯 目标：修好今天人生的每个 Bug\n🕹️ 操作：← → 选择补丁，空格/回车打上，或直接点击补丁；触屏直接点\n💡 小贴士：修对 +10 分，连修有连击；打错掉命',
+  snake:'🎯 目标：吃苹果长蛇身，别撞墙咬尾\n🕹️ 操作：方向键 / W A S D 转向；触屏在棋盘上滑动转向\n💡 小贴士：苹果 +10 分，每得 50 分加速一次',
+  sheep:'🎯 目标：60 秒内清空 18 对羊羊卡\n🕹️ 操作：一次翻两张，一样的消除；触屏直接点卡\n💡 小贴士：连对有加成，翻错会扣时间',
+  mole:'🎯 目标：敲中地鼠，别敲花盆\n🕹️ 操作：地鼠冒头马上点击/触屏敲它\n💡 小贴士：连击翻倍，敲到花盆掉命',
+  t2048:'🎯 目标：合并数字到 2048\n🕹️ 操作：↑ ↓ ← → 滑动合并；触屏在棋盘上直接滑动\n💡 小贴士：相同的数碰一起翻倍，每步出现一个新数字',
+  mine:'🎯 目标：开完所有安全格，不碰雷\n🕹️ 操作：点击/触屏开格，数字表示周围雷数；Shift+点击插 🚩\n💡 小贴士：点到 0 自动扩散，插旗标记可疑格',
+  box:'🎯 目标：把 📦 推到 ⭐ 上\n🕹️ 操作：方向键 / W A S D 移动；触屏在棋盘上滑动\n💡 小贴士：一格一格推，3 关全通放学！',
+  beat:'🎯 目标：音符落进亮绿判定线时击打\n🕹️ 操作：按空格；触屏点击画布击打\n💡 小贴士：Perfect +30、Good +15，漏掉 10 个就下课',
+  frog:'🎯 目标：护蛙回对岸莲花上\n🕹️ 操作：方向键 / W A S D 一格一跳；触屏在棋盘上滑动\n💡 小贴士：躲车流跳浮木，3 关全通获胜',
+  pop:'🎯 目标：戳中所有泡泡\n🕹️ 操作：点击/触屏点中泡泡\n💡 小贴士：+10 分，连戳不松手有连击；漏 10 个结束',
+  jump:'🎯 目标：跳一块块砖别落空\n🕹️ 操作：按住空格蓄力、松手起跳；触屏按住画布蓄力、松手起跳\n💡 小贴士：力度条越长跳得越远，正好落砖 +10 分',
+  suika:'🎯 目标：合成出大西瓜 +500 分封神\n🕹️ 操作：鼠标/触屏左右移动瞄准，点击或空格发射\n💡 小贴士：同果碰到就合体升级，果堆出顶线游戏结束',
+  tiles:'🎯 目标：只点黑块不碰白块\n🕹️ 操作：盯着最底一行，黑块一出现马上点它；触屏直接点\n💡 小贴士：点黑 +10、连点加倍，点错或滑过扣命',
+  water:'🎯 目标：同色液体都倒进同一根试管\n🕹️ 操作：先点一根试管选中，再点另一根倒液；触屏直接点选\n💡 小贴士：空管或同色顶才能接住，每管最多 4 层',
+  hard:'🎯 目标：倒计时内走到终点\n🕹️ 操作：方向键 / W A S D 一格一格移动；触屏在棋盘上滑动\n💡 小贴士：躲开巡逻蓝球，吃到 🪙 +50，越快到分越高',
+  flap:'🎯 目标：飞得越远越牛\n🕹️ 操作：点击或按空格扇翅；触屏轻点即飞\n💡 小贴士：穿过水管 +10 分，撞管或落地就结束'
 };
-let tutP=null;
-function showTut(p){
-  if(localStorage.getItem('dw-tut-'+p))return;
-  tutP=p;
+let tutP=null, tutForce=false;
+function showTut(p,force){
+  const fab=document.getElementById('helpFab');
+  if(fab)fab.classList.remove('hidden');
+  if(!force&&localStorage.getItem('dw-tut-'+p))return;
+  tutP=p; tutForce=!!force;
   const tg=p==='tg';
   document.getElementById('tutIco').textContent=tg?'🥣':'📖';
   document.getElementById('tutTitle').textContent=tg?'一碗海龟汤':'怎么玩？';
@@ -8256,8 +8327,14 @@ function showTut(p){
   document.getElementById('tutOverlay').classList.remove('hidden');
   speak(TutText[p]||'');
 }
+function helpShow(){
+  if(!ACTIVE)return;
+  const id=document.getElementById('helpFab');
+  if(id)id.classList.remove('hidden');
+  showTut(ACTIVE,true);
+}
 function closeTut(){
-  if(tutP)localStorage.setItem('dw-tut-'+tutP,'1');
+  if(tutP&&!tutForce)localStorage.setItem('dw-tut-'+tutP,'1');
   tutP=null;
   document.getElementById('tutOverlay').classList.add('hidden');
 }
