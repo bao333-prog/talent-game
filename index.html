@@ -330,9 +330,10 @@
   <!-- 首页 -->
   <section id="screen-home" class="screen on">
     <div class="hero">
-      <div class="sfx-btn" style="right:104px" onclick="openBadges()" title="成就徽章">🏅</div>
-      <div class="sfx-btn" style="right:52px" onclick="openSettings()" title="设置">⚙️</div>
-      <div class="sfx-btn" id="sfxBtn" onclick="toggleSfx()">🔊</div>
+      <div class="sfx-btn" style="right:156px" onclick="openBadges()" title="成就徽章">🏅</div>
+      <div class="sfx-btn" style="right:104px" onclick="openSettings()" title="设置">⚙️</div>
+      <div class="sfx-btn" style="right:52px" id="sfxBtn" onclick="toggleSfx()">🔊</div>
+      <div class="sfx-btn" id="bgmBtn" onclick="toggleBgm()" title="背景音乐">🎵</div>
       <h1>🎮 校园天赋小宇宙</h1>
       <p>像素风趣味测试 · 十七个测试 + 每日运势 + 三十二大休闲玩法<br>测天赋、人格、玄学、生活梗；抢饭、跑课、收书包、垃圾分类、调色、抢座、大扫除、海龟汤、修 Bug、贪吃蛇、羊了个羊、2048、扫雷、音游节拍、合成大西瓜、别踩白块、水排序、史上最难、像素飞鸟——玩到停不下来</p>
     </div>
@@ -1737,6 +1738,10 @@
         <button id="cvdBtn" class="pixel-btn ghost" style="flex:none;width:170px;padding:10px 6px;font-size:12px" onclick="toggleCvd()">🎨 色弱辅助：关</button>
       </div>
       <div class="setting-row">
+        <div><b>背景音乐</b><div class="sub">像素风 8-bit 循环旋律，契合游戏界面</div></div>
+        <button id="bgmBtn2" class="pixel-btn ghost" style="flex:none;width:170px;padding:10px 6px;font-size:12px" onclick="toggleBgm()">🎵 背景音乐：开</button>
+      </div>
+      <div class="setting-row">
         <div><b>防沉迷提醒</b><div class="sub">累计游玩达到时长后提醒休息</div></div>
         <div class="btn-row" id="restBtns" style="flex:none;width:230px">
           <button onclick="setRest(30)">30 分钟</button>
@@ -1821,6 +1826,86 @@ function toggleSfx(){
   if(Snd.on)Snd.ding();
 }
 toggleSfx(); /* 初始化图标 */
+
+/* ===================== 背景音乐 BGM（像素风 8-bit 合成，无外部资源） ===================== */
+const BGM={
+  on:localStorage.getItem('dwbgm')!=='0', ctx:null, master:null, step:0, nextT:0, timer:null, started:false,
+  /* 8-bit 旋律（C 大调，square 方波 = 红白机音色），0 为休止 */
+  mel:[523,659,784,659, 587,659,784,880, 784,659,587,523, 659,587,523,0,
+       523,659,784,1046, 880,784,659,587, 659,587,523,440, 523,0,440,0],
+  /* 低音行进（triangle 三角波），0 为休止 */
+  bass:[131,0,131,0, 175,0,175,0, 147,0,147,0, 175,0,175,0,
+        131,0,131,0, 175,0,175,0, 147,0,147,0, 175,0,175,0],
+  /* 和声点缀（每 8 步一个长音） */
+  pad:[0,0,0,0,0,0,0,0, 523,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 659,0,0,0,0,0,0,0],
+  ensure(){
+    if(!this.ctx){ try{ this.ctx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
+    if(this.ctx&&this.ctx.state==='suspended')this.ctx.resume();
+    return this.ctx;
+  },
+  note(f,dur,type,vol,delay){
+    const ctx=this.ensure(); if(!ctx)return;
+    const t=ctx.currentTime+(delay||0);
+    const o=ctx.createOscillator(), g=ctx.createGain();
+    o.type=type||'square'; o.frequency.setValueAtTime(f,t);
+    g.gain.setValueAtTime(vol||0.05,t); g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+    o.connect(g); g.connect(this.master||ctx.destination); o.start(t); o.stop(t+dur+0.02);
+  },
+  hat(delay){
+    const ctx=this.ensure(); if(!ctx)return;
+    const t=ctx.currentTime+(delay||0);
+    const buf=ctx.createBuffer(1,Math.max(1,Math.floor(ctx.sampleRate*0.04)),ctx.sampleRate);
+    const d=buf.getChannelData(0); for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*0.22;
+    const s=ctx.createBufferSource(); s.buffer=buf;
+    const f=ctx.createBiquadFilter(); f.type='highpass'; f.frequency.value=6500;
+    const g=ctx.createGain(); g.gain.setValueAtTime(0.06,t); g.gain.exponentialRampToValueAtTime(0.001,t+0.04);
+    s.connect(f); f.connect(g); g.connect(this.master||ctx.destination); s.start(t);
+  },
+  sched(){
+    if(!this.ctx||!this.master)return;
+    const stepDur=60/120/2; /* 120BPM 八分音符 0.25s */
+    while(this.nextT<this.ctx.currentTime+0.3){
+      const s=this.step%32;
+      if(this.mel[s])this.note(this.mel[s],stepDur*0.9,'square',0.035,this.nextT-this.ctx.currentTime);
+      if(this.bass[s])this.note(this.bass[s],stepDur*1.8,'triangle',0.05,this.nextT-this.ctx.currentTime);
+      if(this.pad[s])this.note(this.pad[s],stepDur*3.5,'sine',0.03,this.nextT-this.ctx.currentTime);
+      if(s%4===0)this.note(98,0.12,'square',0.028,this.nextT-this.ctx.currentTime); /* 军鼓位 */
+      this.hat(this.nextT-this.ctx.currentTime);
+      this.nextT+=stepDur; this.step++;
+    }
+  },
+  start(){
+    if(this.started)return;
+    const ctx=this.ensure(); if(!ctx)return;
+    this.master=ctx.createGain(); this.master.gain.value=1; this.master.connect(ctx.destination);
+    this.step=0; this.nextT=ctx.currentTime+0.08;
+    this.timer=setInterval(()=>this.sched(),120);
+    this.started=true;
+  },
+  stop(){
+    if(this.timer){ clearInterval(this.timer); this.timer=null; }
+    this.started=false;
+    if(this.master){ try{ this.master.disconnect(); }catch(e){} this.master=null; }
+  }
+};
+function toggleBgm(){
+  BGM.on=!BGM.on; localStorage.setItem('dwbgm',BGM.on?'1':'0');
+  const b1=document.getElementById('bgmBtn'), b2=document.getElementById('bgmBtn2');
+  if(b1)b1.textContent=BGM.on?'🎵':'🔇';
+  if(b2)b2.textContent=BGM.on?'🎵 背景音乐：开':'🔇 背景音乐：关';
+  if(BGM.on){ BGM.start(); } else { BGM.stop(); }
+  if(Snd.on&&Snd.ding)Snd.ding();
+}
+/* 首次用户手势后启动（浏览器自动播放策略要求） */
+(function bgmBoot(){
+  const boot=()=>{
+    window.removeEventListener('pointerdown',boot);
+    window.removeEventListener('keydown',boot);
+    if(BGM.on&&!BGM.started)BGM.start();
+  };
+  window.addEventListener('pointerdown',boot);
+  window.addEventListener('keydown',boot);
+})();
 
 /* ===================== 数据 ===================== */
 const TESTS={
@@ -4563,7 +4648,7 @@ function mergeInit(){
   MergeState.g=[]; MergeState.h=Array(MC).fill(0); MergeState.score=0; MergeState.top=0; MergeState.merges=0;
   MergeState.over=false; MergeState.falling=null; MergeState.next=1+Math.floor(Math.random()*3);
   for(let c=0;c<MC;c++) MergeState.g[c]=[];
-  if(!MergeState.bound){ MergeState.bound=true; document.getElementById('mergeCv').addEventListener('click',mergeClick); }
+  if(!MergeState.bound){ MergeState.bound=true; document.getElementById('mergeCv').addEventListener('pointerdown',mergeClick); }
   document.getElementById('mergeOverlay').classList.add('hidden');
   updateMergeHud();
   requestAnimationFrame(mergeFrame);
@@ -4717,7 +4802,7 @@ function spotInit(idx){
   spotState.timerId=setInterval(spotTick,1000);
   if(!spotState.bound){
     spotState.bound=true;
-    ['spotCvA','spotCvB'].forEach(id=>document.getElementById(id).addEventListener('click',spotClick));
+    ['spotCvA','spotCvB'].forEach(id=>document.getElementById(id).addEventListener('pointerdown',spotClick));
   }
 }
 function spotTick(){
@@ -5034,8 +5119,8 @@ function blkInit(){
   for(let i=0;i<3;i++)BlkState.queue.push(blkNewShape());
   if(!BlkState.bound){
     BlkState.bound=true;
-    document.getElementById('blkCv').addEventListener('click',blkGridClick);
-    document.getElementById('blkSlots').addEventListener('click',blkSlotClick);
+    document.getElementById('blkCv').addEventListener('pointerdown',blkGridClick);
+    document.getElementById('blkSlots').addEventListener('pointerdown',blkSlotClick);
   }
 }
 function openBlock(){ show('screen-block'); ACTIVE='blk'; showTut('blk'); blkInit(); document.getElementById('blkOverlay').classList.add('hidden'); blkDraw(); blkDrawSlots(); blkHud(); }
@@ -5830,9 +5915,9 @@ function colInit(){
   }
   if(!ColState.bound){
     ColState.bound=true;
-    document.getElementById('colCv').addEventListener('click',colGridClick);
+    document.getElementById('colCv').addEventListener('pointerdown',colGridClick);
     document.querySelectorAll('#colPal .swatch').forEach(s=>{
-      s.addEventListener('click',()=>colPaint(s.dataset.c));
+      s.addEventListener('pointerdown',()=>colPaint(s.dataset.c));
     });
   }
 }
@@ -5916,7 +6001,7 @@ function orbInit(){
   if(!OrbState.bound){
     OrbState.bound=true;
     window.addEventListener('keydown',e=>{ if(!OrbState.on)return; if(e.key===' '||e.key==='ArrowUp'){e.preventDefault();OrbState.ring=1-OrbState.ring;} });
-    document.getElementById('orbCv').addEventListener('click',()=>{ if(OrbState.on)OrbState.ring=1-OrbState.ring; });
+    document.getElementById('orbCv').addEventListener('pointerdown',()=>{ if(OrbState.on)OrbState.ring=1-OrbState.ring; });
   }
 }
 function openOrb(){ show('screen-orb'); ACTIVE='orb'; showTut('orb'); if(OrbState.on||OrbState.over)return; orbStart(); }
@@ -6027,7 +6112,7 @@ function seatInit(){
   }
   if(!SeatState.bound){
     SeatState.bound=true;
-    document.getElementById('seatCv').addEventListener('click',seatClick);
+    document.getElementById('seatCv').addEventListener('pointerdown',seatClick);
   }
 }
 function openSeat(){ show('screen-seat'); ACTIVE='seat'; showTut('seat'); if(SeatState.on||SeatState.over)return; seatStart(); }
@@ -6993,11 +7078,38 @@ function minePaint(){
       if(cell.m)face='💣';
       else if(cell.n)face=cell.n;
     }
-    return `<div data-mi="${i}" style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:bold;color:${ncol[cell.n]||'#fff'};background:${bg};border:2px solid ${bd};border-radius:4px;cursor:pointer" onclick="mineHit(event)">${face}</div>`;
+    return `<div data-mi="${i}" style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:bold;color:${ncol[cell.n]||'#fff'};background:${bg};border:2px solid ${bd};border-radius:4px;cursor:pointer;user-select:none;-webkit-user-select:none">${face}</div>`;
   }).join('')).join('');
   document.getElementById('mineScoreHud').textContent=MineState.score;
   document.getElementById('mineOpen').textContent=MineState.opened+'/'+(MineState.W*MineState.H-MineState.mines);
 }
+/* 扫雷触屏：短按开格，长按(550ms)插旗/拔旗；桌面 Shift+点击 仍可插旗 */
+(function mineTouchBind(){
+  const grid=document.getElementById('mineGrid');
+  if(!grid||grid.dataset.touch)return;
+  grid.dataset.touch='1';
+  let hold=null;
+  grid.addEventListener('pointerdown',e=>{
+    const el=e.target.closest('[data-mi]'); if(!el)return;
+    if(hold)clearTimeout(hold.t);
+    const st={el,i:+el.getAttribute('data-mi'),x:e.clientX,y:e.clientY,flagged:false};
+    st.t=setTimeout(()=>{ if(hold===st){ st.flagged=true; mineFlag(st.i); } },550);
+    hold=st;
+  });
+  grid.addEventListener('pointermove',e=>{
+    if(hold&&Math.hypot(e.clientX-hold.x,e.clientY-hold.y)>8){ clearTimeout(hold.t); hold=null; }
+  });
+  grid.addEventListener('pointerup',e=>{
+    if(!hold)return;
+    clearTimeout(hold.t);
+    const st=hold; hold=null;
+    if(st.flagged)return;
+    if(e.shiftKey){ mineFlag(st.i); return; }
+    mineOpen(Math.floor(st.i/MineState.W),st.i%MineState.W);
+  });
+  grid.addEventListener('pointercancel',()=>{ if(hold){ clearTimeout(hold.t); hold=null; } });
+  grid.addEventListener('contextmenu',e=>e.preventDefault());
+})();
 function mineHud(){
   document.getElementById('mineScoreHud').textContent=MineState.score;
   document.getElementById('mineOpen').textContent=MineState.opened+'/'+(MineState.W*MineState.H-MineState.mines);
@@ -7890,7 +8002,7 @@ function waterPaint(){
       if(c!==undefined){ seg.style.background=WaterCols[c]; }
       tube.appendChild(seg);
     }
-    tube.addEventListener('click',()=>waterTap(i));
+    tube.addEventListener('pointerdown',()=>waterTap(i));
     g.appendChild(tube);
   });
 }
@@ -8301,7 +8413,7 @@ const TutText={
   sheep:'🎯 目标：60 秒内清空 18 对羊羊卡\n🕹️ 操作：一次翻两张，一样的消除；触屏直接点卡\n💡 小贴士：连对有加成，翻错会扣时间',
   mole:'🎯 目标：敲中地鼠，别敲花盆\n🕹️ 操作：地鼠冒头马上点击/触屏敲它\n💡 小贴士：连击翻倍，敲到花盆掉命',
   t2048:'🎯 目标：合并数字到 2048\n🕹️ 操作：↑ ↓ ← → 滑动合并；触屏在棋盘上直接滑动\n💡 小贴士：相同的数碰一起翻倍，每步出现一个新数字',
-  mine:'🎯 目标：开完所有安全格，不碰雷\n🕹️ 操作：点击/触屏开格，数字表示周围雷数；Shift+点击插 🚩\n💡 小贴士：点到 0 自动扩散，插旗标记可疑格',
+  mine:'🎯 目标：开完所有安全格，不碰雷\n🕹️ 操作：点击/触屏开格，数字表示周围雷数；长按格子插 🚩（桌面 Shift+点击）\n💡 小贴士：点到 0 自动扩散，插旗标记可疑格',
   box:'🎯 目标：把 📦 推到 ⭐ 上\n🕹️ 操作：方向键 / W A S D 移动；触屏在棋盘上滑动\n💡 小贴士：一格一格推，3 关全通放学！',
   beat:'🎯 目标：音符落进亮绿判定线时击打\n🕹️ 操作：按空格；触屏点击画布击打\n💡 小贴士：Perfect +30、Good +15，漏掉 10 个就下课',
   frog:'🎯 目标：护蛙回对岸莲花上\n🕹️ 操作：方向键 / W A S D 一格一跳；触屏在棋盘上滑动\n💡 小贴士：躲车流跳浮木，3 关全通获胜',
@@ -8406,6 +8518,9 @@ function renderSettings(){
   Array.from(rb.children).forEach((b,i)=>{ b.classList.toggle('sel', [30,45,60][i]===restLimit); });
   document.getElementById('voiceBtn').textContent=VOICE?'🔊 语音朗读：开':'🔇 语音朗读：关';
   document.getElementById('cvdBtn').textContent=CVD?'🎨 色弱辅助：开':'🎨 色弱辅助：关';
+  const b1=document.getElementById('bgmBtn'), b2=document.getElementById('bgmBtn2');
+  if(b1)b1.textContent=BGM.on?'🎵':'🔇';
+  if(b2)b2.textContent=BGM.on?'🎵 背景音乐：开':'🔇 背景音乐：关';
 }
 function resetTuts(){ Object.keys(TutText).forEach(k=>localStorage.removeItem('dw-tut-'+k)); toast('新手教程已重置，下次开局会再讲解'); }
 
