@@ -5865,7 +5865,7 @@ function alaFrame(now){
   AlaState.tick+=dt;
   if(AlaState.tick>=AlaState.interval){
     AlaState.tick=0;
-    if(document.getElementById('alac'+AlaState.spot).textContent==='⏰'){ AlaState.combo=0; alaHud(); }
+    if(AlaState.spot<6&&document.getElementById('alac'+AlaState.spot).textContent==='⏰'){ AlaState.combo=0; alaHud(); }
     alaShow(Math.floor(Math.random()*6));
   }
   document.getElementById('alaTime').textContent=Math.ceil(AlaState.time);
