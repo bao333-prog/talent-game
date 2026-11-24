@@ -216,6 +216,28 @@
   .daily-qian{text-align:center;font-size:14px;color:var(--cyan);margin-top:16px;font-weight:700;letter-spacing:1px;padding:12px;background:var(--panel2);border:2px solid #0b0d1a;box-shadow:3px 3px 0 0 #0b0d1a}
   .daily-advice{text-align:center;font-size:13px;color:var(--ink);margin-top:14px;line-height:1.8;background:var(--panel2);border:2px solid #0b0d1a;padding:10px;box-shadow:3px 3px 0 0 #0b0d1a}
 
+  /* ===== 每日挑战 ===== */
+  .dch-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .dch-date{font-size:13px;color:var(--sub);letter-spacing:1px}
+  .dch-streak{font-size:12.5px;background:var(--panel2);border:2px solid #0b0d1a;padding:5px 10px;font-weight:800;color:var(--gold);box-shadow:2px 2px 0 0 #0b0d1a}
+  .dch-card{background:var(--panel2);border:2px solid #0b0d1a;box-shadow:3px 3px 0 0 #0b0d1a;padding:16px;margin-top:4px}
+  .dch-top{display:flex;align-items:center;gap:12px}
+  .dch-emoji{font-size:44px;filter:drop-shadow(2px 2px 0 #0b0d1a);line-height:1}
+  .dch-name{font-size:19px;font-weight:900;color:var(--ink)}
+  .dch-goal{font-size:13px;color:var(--sub);margin-top:4px;line-height:1.6}
+  .dch-goal b{color:var(--pink);font-size:16px}
+  .dch-rows{margin-top:12px;display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--ink);font-weight:700}
+  .dch-row{display:flex;justify-content:space-between;align-items:center;background:var(--panel1);border:2px solid #0b0d1a;padding:8px 10px;box-shadow:2px 2px 0 0 #0b0d1a}
+  .dch-row .v{color:var(--gold);font-weight:900;font-size:14px}
+  .dch-row .v.ok{color:var(--green)}
+  .dch-btns{display:flex;gap:10px;margin-top:14px}
+  .dch-btns .pixel-btn{flex:1}
+  .dch-hint{font-size:11.5px;color:var(--sub);margin-top:12px;line-height:1.7;text-align:center}
+  .dch-week{display:flex;justify-content:space-between;gap:6px;margin-top:16px}
+  .dch-day{flex:1;text-align:center;font-size:10px;color:var(--sub)}
+  .dch-day .box{width:100%;aspect-ratio:1;border:2px solid #0b0d1a;background:var(--panel1);display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:4px;box-shadow:2px 2px 0 0 #0b0d1a}
+  .dch-day .box.done{background:var(--green)}
+
   /* ===== 手机端适配 ===== */
   @media (max-width:520px){
     .wrap{padding:16px 12px 48px}
@@ -330,12 +352,13 @@
   <!-- 首页 -->
   <section id="screen-home" class="screen on">
     <div class="hero">
+      <div class="sfx-btn" style="right:208px" onclick="openDch()" title="每日挑战">🎯</div>
       <div class="sfx-btn" style="right:156px" onclick="openBadges()" title="成就徽章">🏅</div>
       <div class="sfx-btn" style="right:104px" onclick="openSettings()" title="设置">⚙️</div>
       <div class="sfx-btn" style="right:52px" id="sfxBtn" onclick="toggleSfx()">🔊</div>
       <div class="sfx-btn" id="bgmBtn" onclick="toggleBgm()" title="背景音乐">🎵</div>
       <h1>🎮 校园天赋小宇宙</h1>
-      <p>像素风趣味测试 · 十七个测试 + 每日运势 + 三十二大休闲玩法<br>测天赋、人格、玄学、生活梗；抢饭、跑课、收书包、垃圾分类、调色、抢座、大扫除、海龟汤、修 Bug、贪吃蛇、羊了个羊、2048、扫雷、音游节拍、合成大西瓜、别踩白块、水排序、史上最难、像素飞鸟——玩到停不下来</p>
+      <p>像素风趣味测试 · 十七个测试 + 每日运势 + 每日挑战 + 三十三大休闲玩法<br>测天赋、人格、玄学、生活梗；抢饭、跑课、收书包、垃圾分类、调色、抢座、大扫除、海龟汤、修 Bug、贪吃蛇、羊了个羊、2048、扫雷、音游节拍、合成大西瓜、别踩白块、水排序、史上最难、像素飞鸟、值日叠椅——玩到停不下来</p>
     </div>
     <div class="test-grid">
       <div class="group-title">🧠 人格与自我</div>
@@ -625,6 +648,11 @@
         <div class="test-meta"><b>史上最难</b><span>Flash 折磨经典 · 躲蓝球走格子，通关都是狠人</span></div>
         <div class="badge pink">受虐</div>
       </button>
+      <button class="test-btn" onclick="openStack()">
+        <div class="test-ico">🪑</div>
+        <div class="test-meta"><b>值日叠椅</b><span>原创像素堆叠 · 看准时机落椅，叠得越高越神</span></div>
+        <div class="badge new">NEW</div>
+      </button>
       <div class="group-title">👀 眼力观察</div>
       <button class="test-btn" onclick="openSpot()">
         <div class="test-ico">🔍</div>
@@ -704,6 +732,38 @@
         <button class="pixel-btn cyan" onclick="makeDailyPoster()">📸 保存运势卡</button>
       </div>
       <button class="pixel-btn ghost" style="margin-top:12px" onclick="copyDaily()">📋 复制今日运势文案</button>
+    </div>
+  </section>
+
+  <!-- 每日挑战页 -->
+  <section id="screen-dch" class="screen">
+    <div class="pixel-card">
+      <div class="sec-title">🎯 每日挑战</div>
+      <div class="q-title" style="margin-bottom:10px">每天一款指定玩法，达到目标分即通关！</div>
+      <div class="dch-head">
+        <span class="dch-date" id="dchDate">—</span>
+        <span class="dch-streak" id="dchStreak">🔥 连续 0 天</span>
+      </div>
+      <div class="dch-card">
+        <div class="dch-top">
+          <div class="dch-emoji" id="dchEmoji">🎮</div>
+          <div>
+            <div class="dch-name" id="dchName">加载中…</div>
+            <div class="dch-goal" id="dchGoal">目标：<b>0</b> 分</div>
+          </div>
+        </div>
+        <div class="dch-rows">
+          <div class="dch-row"><span>🎯 今日目标分</span><span class="v" id="dchTarget">0</span></div>
+          <div class="dch-row"><span>🏅 我的历史最佳</span><span class="v" id="dchBest">0</span></div>
+          <div class="dch-row"><span>✅ 今日状态</span><span class="v" id="dchState">未完成</span></div>
+        </div>
+        <div class="dch-btns">
+          <button class="pixel-btn cyan" id="dchPlayBtn" onclick="dchStart()">🚀 开始挑战</button>
+          <button class="pixel-btn ghost" onclick="backHome()">🏠 返回首页</button>
+        </div>
+      </div>
+      <div class="dch-hint">挑战限当日有效：玩到目标分即自动通关、点亮「今日之星」徽章；连续完成每天都有加成，连续 3 天解锁「连战不休」徽章。每日玩法与目标分按日期生成，人人相同，想冲高分就多练几把！</div>
+      <div class="dch-week" id="dchWeek"></div>
     </div>
   </section>
 
@@ -1707,11 +1767,41 @@
     </div>
   </section>
 
+  <!-- 值日叠椅 -->
+  <section id="screen-stack" class="screen">
+    <div class="pixel-card">
+      <div class="sec-title">🪑 值日叠椅</div>
+      <div class="q-title" style="margin-bottom:8px">值日结束，把椅子一张张叠回储物柜！叠得越齐越高分</div>
+      <div class="g10-stage" style="padding:12px;background:#101826">
+        <canvas id="stackCanvas" width="360" height="520" style="display:block;width:100%;background:#17212f;border:2px solid #37e6ad;image-rendering:pixelated;cursor:pointer"></canvas>
+        <div class="g10-info" id="stackFeed" style="margin-top:10px;font-size:13px;min-height:18px"> </div>
+        <div class="merge-overlay hidden" id="stackOverlay">
+          <div class="mo-emoji" id="stackEmoji">🪑</div>
+          <div class="mo-title" id="stackTitle">叠椅大师</div>
+          <div class="mo-line" id="stackLine"></div>
+          <div class="mo-score" id="stackScore">0 分</div>
+          <div class="mo-sub" id="stackSub"></div>
+          <div class="mo-btns">
+            <button class="pixel-btn" onclick="copyStackResult()">📋 复制</button>
+            <button class="pixel-btn cyan" onclick="stackRestart()">🔄 再来一局</button>
+            <button class="pixel-btn ghost" onclick="backHome()">🏠 回首页</button>
+          </div>
+        </div>
+      </div>
+      <div class="g10-hud">
+        <div class="drf-chip">得分<b id="stackScoreHud">0</b></div>
+        <div class="drf-chip">层数<b id="stackLayers">0</b></div>
+        <div class="drf-chip">连击<b id="stackCombo">×1</b></div>
+      </div>
+      <div class="g10-tip">🖱️ 点击或按空格：等椅子摆到正下方时落下 · 叠得越齐连击越高 · 椅子太窄叠不稳就收工啦</div>
+    </div>
+  </section>
+
   <!-- 成就徽章 -->
   <section id="screen-badges" class="screen">
     <div class="pixel-card">
       <div class="sec-title">🏅 成就徽章</div>
-      <div class="q-title" style="margin-bottom:8px">已解锁 <b id="badgeCount">0/68</b> · 每款玩法都有两枚勋章等你点亮！</div>
+      <div class="q-title" style="margin-bottom:8px">已解锁 <b id="badgeCount">0/72</b> · 每款玩法都有两枚勋章等你点亮！</div>
       <div class="badge-grid" id="badgeGrid"></div>
       <button class="pixel-btn ghost" style="margin-top:18px" onclick="backHome()">🏠 回首页</button>
     </div>
@@ -4473,6 +4563,89 @@ function dailyGen(seedStr){
   const color=['像素蓝','像素黄','像素粉','像素绿','像素紫'][Math.floor(rnd()*5)];
   return {score,dims,f,yis,ji,adv,qian,num,color};
 }
+/* ===================== 每日挑战（模式升级） ===================== */
+const DCH_POOL=[
+  ['can','干饭王','🍗','openCan',1200],
+  ['run','课间铃声跑','🏃','openRun',1200],
+  ['bag','书包收纳王','🎒','openBag',2500],
+  ['bin','垃圾分类','♻️','openBin',350],
+  ['ala','时光机问答','⏰','openAla',150],
+  ['orb','星球捕手','🪐','openOrb',200],
+  ['seat','抢占座位','🪑','openSeat',600],
+  ['mop','值日生大扫除','🧹','openMop',400],
+  ['drift','无限漂移','🏎️','openDrift',600],
+  ['snake','课间贪吃蛇','🐍','openSnake',80],
+  ['sheep','羊了个羊','🐑','openSheep',300],
+  ['mole','打地鼠','🔨','openMole',400],
+  ['t2048','2048','🔢','openT2048',600],
+  ['beat','课桌节拍','🎹','openBeat',600],
+  ['frog','青蛙过河','🐸','openFrog',300],
+  ['suika','合成大西瓜','🍉','openSuika',250],
+  ['tiles','别踩白块','⚫','openTiles',600],
+  ['hard','史上最难','🔴','openHard',250],
+  ['flap','像素飞鸟','🐤','openFlap',250],
+  ['mg','今日合成','🧪','openMerge',500],
+  ['stack','值日叠椅','🪑','openStack',400]
+];
+const DCH={active:false,p:null,target:0,open:null,est:0};
+function dchToday(){
+  const rnd=mulberry32(hashStr('dch'+todayStr()));
+  const i=Math.floor(rnd()*DCH_POOL.length);
+  const it=DCH_POOL[i];
+  return {it,target:Math.round(it[4]*(0.55+rnd()*0.45)),ds:(new Date().getMonth()+1)+'月'+new Date().getDate()+'日',w:weekCN()};
+}
+function openDch(){
+  const d=dchToday();
+  DCH.p=d.it[0]; DCH.target=d.target; DCH.open=d.it[3]; DCH.est=d.it[4];
+  renderDch(d);
+  show('screen-dch');
+}
+function dchRec(){ return JSON.parse(localStorage.getItem('dw-dch')||'{"d":"","n":0}'); }
+function dchDoneDates(){ return JSON.parse(localStorage.getItem('dw-dch-days')||'[]'); }
+function renderDch(d){
+  document.getElementById('dchDate').textContent=d.ds+' · 星期'+d.w;
+  const rec=dchRec();
+  document.getElementById('dchStreak').textContent='🔥 连续 '+rec.n+' 天';
+  document.getElementById('dchEmoji').textContent=d.it[2];
+  document.getElementById('dchName').textContent=d.it[1];
+  document.getElementById('dchGoal').innerHTML='目标：<b>'+d.target+'</b> 分';
+  document.getElementById('dchTarget').textContent=d.target;
+  const best=weekBest(DCH.p);
+  document.getElementById('dchBest').textContent=best||'—';
+  const done=rec.d===todayStr();
+  const st=document.getElementById('dchState');
+  st.textContent=done?'✅ 今日已通关':'未完成';
+  st.classList.toggle('ok',done);
+  document.getElementById('dchPlayBtn').textContent=done?'🔄 再玩一次':'🚀 开始挑战';
+  const week=document.getElementById('dchWeek'); week.innerHTML='';
+  const days=dchDoneDates();
+  for(let k=6;k>=0;k--){
+    const dd=new Date(Date.now()-k*86400000);
+    const ds=dd.getFullYear()+''+(dd.getMonth()+1)+''+dd.getDate();
+    const done2=days.indexOf(ds)>=0;
+    const el=document.createElement('div'); el.className='dch-day';
+    el.innerHTML='<div class="box'+(done2?' done':'')+'">'+(done2?'✅':'—')+'</div>'+(k===0?'今天':((dd.getMonth()+1)+'/'+dd.getDate()));
+    week.appendChild(el);
+  }
+}
+function dchStart(){
+  if(!DCH.open)return;
+  DCH.active=true;
+  window[DCH.open]();
+}
+function dchComplete(score){
+  const t=todayStr();
+  const rec=dchRec();
+  const n=rec.d===ydStr()?rec.n+1:1;
+  localStorage.setItem('dw-dch',JSON.stringify({d:t,n}));
+  const days=dchDoneDates();
+  if(days.indexOf(t)<0){ days.push(t); if(days.length>7)days.shift(); localStorage.setItem('dw-dch-days',JSON.stringify(days)); }
+  toast('🎯 每日挑战完成！得 '+score+' 分');
+  speak('每日挑战完成！');
+}
+function dchMiss(score){
+  toast('差 '+Math.max(0,DCH.target-score)+' 分达标，再试一次！');
+}
 function openDaily(){
   dailyCustom=false;
   const d=new Date();
@@ -6843,7 +7016,7 @@ function t2048Init(){
   T2048State.grid=[];
   for(let r=0;r<4;r++){ T2048State.grid.push([0,0,0,0]); }
   T2048State.score=0; T2048State.max=2; T2048State.over=false;
-  t2048Add(); t2048Add();
+  for(let i=0;i<DiffTune.t2048.s[DIFF];i++)t2048Add();
   t2048Paint();
   document.getElementById('t2048Feed').textContent='🔢 方向键合并数字，冲向 2048！';
 }
@@ -7153,6 +7326,7 @@ function boxMove(dr,dc){
   if(Snd&&Snd.pick)Snd.pick();
   document.getElementById('boxFeed').textContent='🧱 步数 '+BoxState.steps+'，把 📦 推到 ⭐ 上';
   boxRender(); boxHud();
+  if(BoxState.steps>=DiffTune.box.st[DIFF]){ boxOver(false); return; }
   if(BoxState.goals.every(g=>grid[g[0]][g[1]]===4)){ boxNext(); }
 }
 function boxNext(){
@@ -7506,7 +7680,7 @@ bindSwipe(document.getElementById('frogGrid'),(dr,dc)=>{ if(!FrogState.on||FrogS
 /* ---------- 26. 解压戳泡泡 ---------- */
 const PopState={on:false,over:false,bubs:[],spawnAcc:0,spawnGap:0.9,score:0,streak:0,miss:0,raf:null,last:0};
 function popInit(){
-  PopState.bubs=[]; PopState.spawnAcc=0; PopState.spawnGap=0.9; PopState.score=0; PopState.streak=0; PopState.miss=0; PopState.over=false;
+  PopState.bubs=[]; PopState.spawnAcc=0; PopState.spawnGap=DiffTune.pop.g[DIFF]; PopState.score=0; PopState.streak=0; PopState.miss=0; PopState.over=false;
   document.getElementById('popFeed').textContent='🫧 点中泡泡 +10，连戳有加成！';
   popHud();
 }
@@ -7633,7 +7807,7 @@ function jumpTick(ts){
   if(!JumpState.on||JumpState.over)return;
   const dt=JumpState.last?Math.min(0.05,(ts-JumpState.last)/1000):0.016;
   JumpState.last=ts;
-  if(JumpState.charging){ JumpState.power=Math.min(140,JumpState.power+dt*200); }
+  if(JumpState.charging){ JumpState.power=Math.min(140,JumpState.power+dt*200*DiffTune.jump.p[DIFF]); }
   if(JumpState.flying){
     JumpState.flyT+=dt;
     const t=Math.min(1,JumpState.flyT/0.28);
@@ -8246,6 +8420,117 @@ window.addEventListener('keydown',e=>{
   if(e.key===' '||e.key==='ArrowUp'){ flapFlap(); e.preventDefault(); }
 });
 
+/* ===================== 值日叠椅（原创像素堆叠） ===================== */
+const StackState={on:false,over:false,score:0,combo:1,layers:[],swing:0,falling:null,raf:null,last:0};
+function stackInit(){
+  const st=StackState;
+  st.score=0; st.combo=1; st.over=false;
+  const w=180;
+  st.layers=[{w,h:24,x:(360-w)/2,y:520-58-24}];
+  st.swing=0; st.falling=null;
+}
+function stackTick(now){
+  const st=StackState; if(!st.on||st.over){ st.raf=null; return; }
+  if(!st.last)st.last=now;
+  const dt=Math.min(0.05,(now-st.last)/1000); st.last=now;
+  const sp=DiffTune.stack.sp[DIFF];
+  st.swing+=sp*dt;
+  const top=st.layers[st.layers.length-1];
+  if(!st.falling){
+    st.falling={w:top.w,h:24,x:0,lock:false};
+  }
+  if(!st.falling.lock){
+    st.falling.x=(360-st.falling.w)/2+Math.sin(st.swing)*((360-st.falling.w)/2-8);
+    st.falling.y=top.y-24;
+  }else{
+    st.falling.y+=260*dt;
+    if(st.falling.y>=top.y-24)stackDrop();
+  }
+  stackPaint();
+}
+function stackDrop(){
+  const st=StackState; const top=st.layers[st.layers.length-1]; const f=st.falling;
+  const minW=DiffTune.stack.mw[DIFF];
+  const ox=Math.max(top.x,f.x), o2=Math.min(top.x+top.w,f.x+f.w);
+  const overlap=o2-ox;
+  st.falling=null; st.swing=Math.random()*6;
+  if(overlap<minW){ stackOver(); return; }
+  st.combo=(overlap/top.w>=0.86)?st.combo+1:1;
+  const nw=Math.max(minW,overlap);
+  st.layers.push({w:nw,h:24,x:ox,y:top.y-24});
+  st.score+=10+(st.combo-1)*2;
+  if(Snd&&Snd.pick)Snd.pick();
+  document.getElementById('stackFeed').textContent=st.layers.length-1+' 层 · 本次叠准率 '+(overlap/top.w>=0.86?'💯 完美':'还不错');
+  stackHud();
+  if(st.layers.length-1>=24){ stackOver(true); }
+}
+function stackOver(win){
+  const st=StackState; if(st.over)return; st.over=true; st.on=false;
+  if(st.raf){ cancelAnimationFrame(st.raf); st.raf=null; }
+  const L=st.layers.length-1, s=st.score;
+  const title=win?'叠椅之神':L>=18?'叠椅大师':L>=10?'叠椅高手':'值日新手';
+  document.getElementById('stackEmoji').textContent=win?'👑':'🪑';
+  document.getElementById('stackTitle').textContent=title;
+  document.getElementById('stackLine').textContent=win?'24 层全部叠稳，储物柜整整齐齐！':'叠到 '+L+' 层椅子歪了，下次再战！';
+  document.getElementById('stackScore').textContent=s+' 分';
+  document.getElementById('stackSub').textContent='本局叠了 '+L+' 层 · 最高连击 ×'+st.combo;
+  const key='dw-stack-best', best=JSON.parse(localStorage.getItem(key)||'null');
+  const nb=!best||best.d!==todayStr()||s>best.s;
+  if(nb)localStorage.setItem(key,JSON.stringify({d:todayStr(),s}));
+  document.getElementById('stackSub').textContent+=nb?' · 🎉 新的今日最佳！':' · 今日最佳 '+((JSON.parse(localStorage.getItem(key)||'null')||{}).s||0)+' 分';
+  document.getElementById('stackOverlay').classList.remove('hidden');
+  gameEnded('stack',s,title);
+}
+function stackHud(){
+  document.getElementById('stackScoreHud').textContent=StackState.score;
+  document.getElementById('stackLayers').textContent=StackState.layers.length-1;
+  document.getElementById('stackCombo').textContent='×'+StackState.combo;
+}
+function stackPaint(){
+  const cv=document.getElementById('stackCanvas'); const c=cv.getContext('2d');
+  c.clearRect(0,0,360,520);
+  c.fillStyle='#0f1620'; c.fillRect(0,0,360,520);
+  for(let y=40;y<520;y+=24){ c.fillStyle='#131c29'; c.fillRect(0,y,360,2); }
+  const cols=['#f4a261','#e76f51','#e9c46a','#8ab17d','#6a9fb5','#d98f9f','#b08bd9','#7fb3d5'];
+  const st=StackState;
+  st.layers.forEach((l,i)=>{
+    if(i===0){ c.fillStyle='#3a4658'; c.fillRect(l.x-6,l.y, l.w+12,l.h); c.fillStyle='#2c3646'; c.fillRect(l.x,l.y,l.w,l.h); }
+    else{
+      const col=cols[i%cols.length];
+      c.fillStyle='#0b0d1a'; c.fillRect(l.x,l.y,l.w,l.h);
+      c.fillStyle=col; c.fillRect(l.x+2,l.y+2,l.w-4,l.h-4);
+      c.fillStyle='#0b0d1a'; c.fillRect(l.x+l.w/2-4,l.y+4,8,l.h-8);
+    }
+  });
+  if(st.falling&&!st.over){
+    const f=st.falling;
+    c.fillStyle='#0b0d1a'; c.fillRect(f.x,f.y,f.w,f.h);
+    c.fillStyle='#ffd166'; c.fillRect(f.x+2,f.y+2,f.w-4,f.h-4);
+    c.fillStyle='#0b0d1a'; c.fillRect(f.x+f.w/2-4,f.y+4,8,f.h-8);
+    c.fillStyle='rgba(255,209,102,.35)'; c.fillRect(0,f.y+f.h+4,360,2);
+  }
+}
+function openStack(){
+  if(StackState.on||StackState.over)return;
+  show('screen-stack'); ACTIVE='stack'; showTut('stack');
+  stackInit(); StackState.on=true;
+  document.getElementById('stackOverlay').classList.add('hidden');
+  document.getElementById('stackFeed').textContent='等椅子摆到正下方时点击落下，叠得越齐分越高！';
+  stackHud();
+  const tick=(t)=>{ stackTick(t); StackState.raf=requestAnimationFrame(tick); };
+  StackState.raf=requestAnimationFrame(tick);
+}
+function stackRestart(){ if(StackState.raf){cancelAnimationFrame(StackState.raf);StackState.raf=null;} StackState.over=true; StackState.on=false; openStack(); }
+function copyStackResult(){ shareResult('stack',document.getElementById('stackEmoji').textContent,document.getElementById('stackTitle').textContent,'值日叠椅',StackState.score); }
+(function(){
+  const cv=document.getElementById('stackCanvas');
+  cv.addEventListener('pointerdown',e=>{ if(StackState.on&&!StackState.over&&StackState.falling&&!StackState.falling.lock)StackState.falling.lock=true; });
+})();
+window.addEventListener('keydown',e=>{
+  if(!StackState.on||StackState.over)return;
+  if(e.key===' '||e.key==='ArrowUp'){ if(StackState.falling&&!StackState.falling.lock)StackState.falling.lock=true; e.preventDefault(); }
+});
+
 /* ===================== 全局系统：难度/记录/成就/防沉迷/TTS/教程/分享/色弱 ===================== */
 const DiffTune={
   can:{t:[75,60,45]}, run:{s:[3.0,3.5,4.2]}, bag:{i:[850,700,560]},
@@ -8256,7 +8541,9 @@ const DiffTune={
   mole:{l:[4,3,2],t:[35,30,25]}, t2048:{}, mine:{n:[8,10,12]}, box:{},
   beat:{g:[1.1,1.0,0.85],s:[150,175,200]}, frog:{l:[4,3,2]}, pop:{}, jump:{},
   suika:{lvl:[0,1,2]}, tiles:{t:[60,50,40],l:[3,2,1],sp:[620,560,500]},
-  water:{n:[5,6,8]}, hard:{t:[75,60,45],n:[3,4,5]}, flap:{g:[900,1200,1500],sp:[150,180,220]}
+  water:{n:[5,6,8]}, hard:{t:[75,60,45],n:[3,4,5]}, flap:{g:[900,1200,1500],sp:[150,180,220]},
+  stack:{sp:[1.6,1.9,2.3],mw:[44,32,22]},
+  t2048:{s:[2,2,3]}, box:{st:[120,90,60]}, pop:{g:[0.95,0.8,0.6]}, jump:{p:[0.8,1.0,1.3]}
 };
 const DIFF_NAMES=['😌 轻松','🎯 标准','🔥 挑战'];
 let DIFF=parseInt(localStorage.getItem('dw-diff')||'1');
@@ -8300,7 +8587,7 @@ function played(p){ return (JSON.parse(localStorage.getItem('dw-plays')||'{}')[p
 const BadgeDefs=[
   ['tot-0','百战成钢','🏆','累计游玩 100 局',()=>totalPlays()>=100],
   ['tot-1','天天向上','📅','连续 3 天游玩',()=>JSON.parse(localStorage.getItem('dw-days')||'{"d":"","n":0}').n>=3],
-  ['tot-2','十全十美','🌟','体验全部 32 款玩法',()=>Object.keys(JSON.parse(localStorage.getItem('dw-plays')||'{}')).length>=32],
+  ['tot-2','十全十美','🌟','体验全部 33 款玩法',()=>Object.keys(JSON.parse(localStorage.getItem('dw-plays')||'{}')).length>=32],
   ['tot-3','本周全勤','🗓️','连续 5 天游玩',()=>JSON.parse(localStorage.getItem('dw-days')||'{"d":"","n":0}').n>=5],
   ['can-0','干饭王者','🍗','食堂抢饭单局 1500+',()=>weekBest('can')>=1500],
   ['can-1','打饭常客','🥄','食堂抢饭玩满 5 局',()=>played('can')>=5],
@@ -8365,7 +8652,11 @@ const BadgeDefs=[
   ['hard-0','通关大师','🏁','史上最难通关或玩满 10 局',()=>weekBest('hard')>=100||played('hard')>=10],
   ['hard-1','受虐选手','🔴','史上最难玩满 5 局',()=>played('hard')>=5],
   ['flap-0','飞行冠军','🐤','像素飞鸟单局 300+ 或玩满 10 局',()=>weekBest('flap')>=300||played('flap')>=10],
-  ['flap-1','菜鸟起飞','🪶','像素飞鸟玩满 5 局',()=>played('flap')>=5]
+  ['flap-1','菜鸟起飞','🪶','像素飞鸟玩满 5 局',()=>played('flap')>=5],
+  ['dch-0','今日之星','🎯','完成任意一天的每日挑战',()=>{const r=JSON.parse(localStorage.getItem('dw-dch')||'{"d":"","n":0}');return r.d===todayStr();}],
+  ['dch-1','连战不休','🔥','连续 3 天完成每日挑战',()=>JSON.parse(localStorage.getItem('dw-dch')||'{"d":"","n":0}').n>=3],
+  ['stack-0','叠椅高手','🪑','值日叠椅单局 300+',()=>weekBest('stack')>=300],
+  ['stack-1','值日标兵','🧹','值日叠椅玩满 5 局',()=>played('stack')>=5]
 ];
 let toastT=null;
 function toast(msg){
@@ -8380,6 +8671,7 @@ function gameEnded(p,s,title){
   if(fab)fab.classList.add('hidden');
   bumpPlay(p);
   recWeek(p,s);
+  if(DCH.active&&DCH.p===p){ DCH.active=false; if(s>=DCH.target)dchComplete(s); else dchMiss(s); }
   const got=JSON.parse(localStorage.getItem('dw-badges')||'{}');
   let news=[];
   BadgeDefs.forEach(b=>{ if(!got[b[0]]&&b[4]()){ got[b[0]]=1; news.push(b); } });
@@ -8423,7 +8715,8 @@ const TutText={
   tiles:'🎯 目标：只点黑块不碰白块\n🕹️ 操作：盯着最底一行，黑块一出现马上点它；触屏直接点\n💡 小贴士：点黑 +10、连点加倍，点错或滑过扣命',
   water:'🎯 目标：同色液体都倒进同一根试管\n🕹️ 操作：先点一根试管选中，再点另一根倒液；触屏直接点选\n💡 小贴士：空管或同色顶才能接住，每管最多 4 层',
   hard:'🎯 目标：倒计时内走到终点\n🕹️ 操作：方向键 / W A S D 一格一格移动；触屏在棋盘上滑动\n💡 小贴士：躲开巡逻蓝球，吃到 🪙 +50，越快到分越高',
-  flap:'🎯 目标：飞得越远越牛\n🕹️ 操作：点击或按空格扇翅；触屏轻点即飞\n💡 小贴士：穿过水管 +10 分，撞管或落地就结束'
+  flap:'🎯 目标：飞得越远越牛\n🕹️ 操作：点击或按空格扇翅；触屏轻点即飞\n💡 小贴士：穿过水管 +10 分，撞管或落地就结束',
+  stack:'🎯 目标：值日结束把椅子叠回储物柜\n🕹️ 操作：点击 / 空格，等椅子摆到正下方时落下\n💡 小贴士：叠得越齐连击越高，椅子太窄就会散架'
 };
 let tutP=null, tutForce=false;
 function showTut(p,force){
